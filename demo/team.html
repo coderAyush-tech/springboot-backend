@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <title>🔥 Rise with Passion</title>
+    <style>
+        body {
+          margin: 0;
+          font-family: 'Segoe UI', sans-serif;
+          background: radial-gradient(circle at top, #ff6a00, #2c2c2c);
+          color: white;
+          overflow-x: hidden;
+        }
+        h1 {
+          text-align: center;
+          font-size: 3rem;
+          margin: 2rem 0;
+          animation: flicker 2s infinite;
+        }
+        .card-container {
+          display: flex;
+          flex-wrap: wrap;
+          justify-content: center;
+          gap: 1.5rem;
+          padding: 1rem;
+        }
+        .card {
+          background: linear-gradient(135deg, #ff6a00, #ff0000);
+          border-radius: 12px;
+          padding: 1rem;
+          width: 200px;
+          box-shadow: 0 0 20px rgba(255, 100, 0, 0.6);
+          cursor: pointer;
+          transition: transform 0.3s ease, box-shadow 0.3s ease;
+          animation: rise 0.8s ease forwards;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+          font-weight: bold;
+          font-size: 1.2rem;
+          text-align: center;
+        }
+        .card:hover {
+          transform: scale(1.05);
+          box-shadow: 0 0 30px rgba(255, 150, 0, 0.8);
+        }
+        .popup {
+          position: fixed;
+          top: 0; left: 0;
+          width: 100%; height: 100%;
+          background: rgba(0,0,0,0.6);
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          backdrop-filter: blur(8px);
+        }
+        .popup-content {
+          background: rgba(34,34,34,0.9);
+          padding: 2rem;
+          border-radius: 10px;
+          text-align: center;
+          box-shadow: 0 0 20px #ff6a00;
+          color: white;
+        }
+        .popup-content button {
+          margin-top: 1rem;
+          padding: 0.5rem 1rem;
+          background: #ff6a00;
+          border: none;
+          color: white;
+          border-radius: 5px;
+          cursor: pointer;
+        }
+        .popup-content input {
+          width: 80%;
+          padding: 0.5rem;
+          margin: 0.5rem 0;
+          border-radius: 5px;
+          border: none;
+        }
+        .hidden {
+          display: none;
+        }
+        @keyframes flicker {
+          0%, 100% { opacity: 1; }
+          50% { opacity: 0.7; }
+        }
+        @keyframes rise {
+          from { transform: translateY(20px); opacity: 0; }
+          to { transform: translateY(0); opacity: 1; }
+        }
+        #add-team-btn {
+          position: fixed;
+          bottom: 30px;
+          right: 30px;
+          background: linear-gradient(45deg, #ff6a00, #ff0000);
+          color: white;
+          border: none;
+          border-radius: 50px;
+          padding: 1rem 1.5rem;
+          font-size: 1.2rem;
+          box-shadow: 0 0 20px rgba(255, 100, 0, 0.6);
+          cursor: pointer;
+          transition: transform 0.3s ease;
+        }
+        #add-team-btn:hover {
+          transform: scale(1.1);
+          box-shadow: 0 0 30px rgba(255, 150, 0, 0.8);
+        }
+        .card-btn {
+  margin-top: 0.5rem;
+  padding: 0.4rem 0.8rem;
+  font-size: 0.9rem;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.view-btn {
+  background: linear-gradient(45deg, #ff9900, #ff5e00);
+  color: white;
+  box-shadow: 0 0 10px rgba(255, 150, 0, 0.6);
+}
+
+.view-btn:hover {
+  transform: scale(1.05);
+  box-shadow: 0 0 15px rgba(255, 180, 0, 0.8);
+}
+
+.remove-btn {
+  background: linear-gradient(45deg, #ff0000, #990000);
+  color: white;
+  box-shadow: 0 0 10px rgba(255, 50, 0, 0.6);
+}
+
+.remove-btn:hover {
+  transform: scale(1.05);
+  box-shadow: 0 0 15px rgba(255, 80, 0, 0.8);
+}
+    </style>
+</head>
+<body>
+<h1>🔥 Coding Age Premiere League</h1>
+<div id="card-container" class="card-container"></div>
+
+<div id="popup" class="popup hidden">
+    <div class="popup-content">
+        <span id="team-name"></span><br />
+        <button onclick="openUpdateModal()">Update</button>
+        <button onclick="closePopup()">Close</button>
+    </div>
+</div>
+
+<button id="add-team-btn">➕ Add Team</button>
+
+<div id="add-team-modal" class="popup hidden">
+    <div class="popup-content">
+        <h2>Add New Team</h2>
+        <input type="text" id="team-name-input" placeholder="Team Name" /><br>
+        <input type="text" id="team-motto-input" placeholder="Motto" /><br>
+        <input type="text" id="team-color-input" placeholder="Color (e.g. #ff0000)" /><br>
+        <input type="text" id="team-image-input" placeholder="Image URL" /><br>
+        <button onclick="submitTeam()">Submit</button>
+        <button onclick="closeAddTeam()">Cancel</button>
+    </div>
+</div>
+
+<div id="update-team-modal" class="popup hidden">
+    <div class="popup-content">
+        <h2>Update Team</h2>
+        <input type="text" id="update-motto" placeholder="New Motto" /><br>
+        <input type="text" id="update-color" placeholder="New Color" /><br>
+        <input type="text" id="update-image" placeholder="New Image URL" /><br>
+        <button onclick="submitUpdate()">Submit</button>
+        <button onclick="closeUpdateModal()">Cancel</button>
+    </div>
+</div>
+
+<script>
+    const cardContainer = document.getElementById('card-container');
+    const popup = document.getElementById('popup');
+    const teamNameSpan = document.getElementById('team-name');
+    const addTeamBtn = document.getElementById('add-team-btn');
+    const addTeamModal = document.getElementById('add-team-modal');
+    let currentTeamName = '';
+
+    async function fetchCards() {
+      try {
+        cardContainer.innerHTML = '';
+        const res = await fetch('http://localhost:8080/cards');
+        const cards = await res.json();
+        cards.forEach(card => {
+  const div = document.createElement('div');
+  div.className = 'card';
+  div.innerHTML = `
+    <div>${card.name}</div>
+    <button class="card-btn view-btn" onclick="fetchTeam('${card.name}')">👁️ View</button>
+    <button class="card-btn remove-btn" onclick="removeTeam('${card.name}')">🗑️ Remove</button>
+  `;
+  cardContainer.appendChild(div);
+});
+
+      } catch (err) {
+        console.error('Error fetching cards:', err);
+      }
+    }
+
+    async function fetchTeam(name) {
+      try {
+        const res = await fetch(`http://localhost:8080/team?name=${encodeURIComponent(name)}`);
+        const data = await res.json();
+        currentTeamName = data.name;
+        teamNameSpan.innerHTML = `
+          <img src="${data.image}" alt="${data.name}" style="width:150px; border-radius:8px; box-shadow:0 0 10px ${data.color};"><br>
+          <strong>${data.name}</strong><br>
+          Motto: ${data.motto}<br>
+          Color: <span style="color:${data.color}">${data.color}</span>
+        `;
+        popup.classList.remove('hidden');
+      } catch (err) {
+        console.error('Error fetching team:', err);
+      }
+    }
+
+    async function removeTeam(name) {
+      try {
+        await fetch(`http://localhost:8080/team?name=${encodeURIComponent(name)}`, {
+          method: 'DELETE'
+        });
+        fetchCards();
+      } catch (err) {
+        console.error('Error removing team:', err);
+      }
+    }
+
+    function closePopup() {
+      popup.classList.add('hidden');
+    }
+
+    addTeamBtn.onclick = () => addTeamModal.classList.remove('hidden');
+    function closeAddTeam() {
+      addTeamModal.classList.add('hidden');
+    }
+
+    async function submitTeam() {
+      const name = document.getElementById('team-name-input').value;
+      const motto = document.getElementById('team-motto-input').value;
+      const color = document.getElementById('team-color-input').value;
+      const image = document.getElementById('team-image-input').value;
+
+      try {
+        await fetch('http://localhost:8080/team', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ name, motto, color, image })
+        });
+        closeAddTeam();
+        fetchCards();
+      } catch (err) {
+        console.error('Error adding team:', err);
+      }
+    }
+
+    function openUpdateModal() {
+      popup.classList.add('hidden');
+      document.getElementById('update-team-modal').classList.remove('hidden');
+    }
+
+    function closeUpdateModal() {
+      document.getElementById('update-team-modal').classList.add('hidden');
+    }
+
+    async function submitUpdate() {
+    const motto = document.getElementById('update-motto').value;
+    const color = document.getElementById('update-color').value;
+    const image = document.getElementById('update-image').value;
+
+    try {
+      await fetch('http://localhost:8080/team', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name: currentTeamName,
+          motto,
+          color,
+          image
+        })
+      });
+      closeUpdateModal();
+      fetchCards();
+    } catch (err) {
+      console.error('Error updating team:', err);
+    }
+  }
+
+  // Initial load
+  fetchCards();
+</script>
+</body>
+</html>
