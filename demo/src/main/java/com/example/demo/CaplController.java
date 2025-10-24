@@ -8,7 +8,8 @@ import org.springframework.web.bind.annotation.*;
 import java.util.*;
 
 @RestController
-@CrossOrigin(origins = "*", maxAge = 3600)
+//@CrossOrigin(origins = "*", maxAge = 3600) this is for local
+@CrossOrigin(origins = "https://fullstackkin.netlify.app/")
 public class CaplController {
 
     @Autowired
